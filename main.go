@@ -13,8 +13,8 @@ import (
 
 	"bufio"
 
-	"github.com/arteev/invstick/cmd/domain"
-	"github.com/arteev/invstick/cmd/flags"
+	"github.com/arteev/invstick/domain"
+	"github.com/arteev/invstick/flags"
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/qr"
 )
