@@ -1,0 +1,9 @@
+language: go
+sudo: required
+go:
+ - tip
+
+script:
+  - go get ./cmd
+  - go test -v ./cmd/...
+  - go build -o invstick ./cmd 
