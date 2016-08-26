@@ -13,15 +13,12 @@ import (
 
 	"bufio"
 
+	"math"
+
 	"github.com/arteev/invstick/domain"
 	"github.com/arteev/invstick/flags"
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/qr"
-)
-
-const (
-	templates     = "templates"
-	templstickers = "stickers.tmpl"
 )
 
 type FuncMakeData func(stick domain.StickersService) error
@@ -164,11 +161,46 @@ func dataFromPipe(sticks domain.StickersService) error {
 	return nil
 }
 
+func mkSlice(args ...interface{}) []interface{} {
+	return args
+}
+
+func mul(a, b int) int {
+	return a * b
+}
+
+func add(a, b int) int {
+	return a + b
+}
+
+func calcpages(onpage, count int) int {
+	i := count / onpage
+	if math.Mod(float64(count), float64(onpage)) > 0 {
+		i++
+	}
+	return i
+}
+
+func mkSliceRange(from, count int) (result []int) {
+	for i := from; i < from+count; i++ {
+		result = append(result, i)
+	}
+	return
+}
+
 func DoTemplate(sticks domain.StickersService) error {
-	st, err := template.ParseFiles(flags.Template...)
+	funcMap := map[string]interface{}{
+		"mkSlice":      mkSlice,
+		"mkSliceRange": mkSliceRange,
+		"mul":          mul,
+		"add":          add,
+		"calcpages":    calcpages}
+
+	st, err := template.New(path.Base(*flags.Template)).Funcs(funcMap).ParseFiles(*flags.Template)
 	if err != nil {
 		return err
 	}
+
 	var out io.Writer
 	if *flags.Dir == "" {
 		out = os.Stdout

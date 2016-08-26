@@ -1,0 +1,49 @@
+<html>
+    <body>
+            <style type="text/css">
+                @media print {
+                    .hideprint{
+                         display:none;
+                    }
+                    .borderdot{
+                        border: 0px;
+                    }
+                    
+                }
+                @media screen {
+                    .borderdot{
+                            border: 1px dotted black;
+                    }
+                }
+                .pager {
+                       margin-top:5px;margin-left:1.0cm; 
+                }
+            </style>        
+            {{$ldata:=len .}}
+            {{$data:=.}}
+            {{$pages:=len . | calcpages 65 | mkSliceRange 1}}            
+            {{range $page := $pages }}            
+            <table  class="borderdot" style="width: 19cm; border-collapse: collapse; margin-top:1.07cm;margin-left:1.0cm;margin-right:1.0cm;" >
+            <tbody>                
+                {{range $x := mkSliceRange 0 13}}
+                    <tr style="height: 2.12cm;">                    
+                    {{range $y:= mkSliceRange 0 5 }}                                               
+                         {{$idx := mul $x 5 | add $y}}
+                         <td class="borderdot" style="width: 3.8cm;  margin-left:2px;">                             
+                             {{if lt $idx $ldata}}
+                                {{with $item := index $data $idx}}
+                                    <img src="{{$item.QRCode}}" />
+                                    <span>{{$item.Num}}</span>                                    
+                                {{end}}
+                             {{end}}
+                         </td>                           
+                    {{end}}                    
+                    </tr>
+                {{end}}                        
+            </tbody>           
+            </table>
+            <span class="hideprint pager">Page {{.}}/{{len $pages}}</span>
+            <div style="page-break-after: always;"></div>                             
+            {{end}}         
+    </body>
+</html>

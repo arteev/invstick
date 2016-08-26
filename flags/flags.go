@@ -23,7 +23,7 @@ var (
 //Flags cli
 var (
 	//List of templates
-	Template ArrayString
+	Template = flag.String("template", "", "Name of template(s). -template tmpl1 template tmpl2 ...")
 	Dir      = flag.String("dir", "", "Output directory")
 
 	Suffix = flag.String("suffix", "", "Optional.Use suffix for generation")
@@ -71,7 +71,7 @@ func usage() {
 func init() {
 	flag.Usage = usage
 	flag.Var(&Data, "data", "List of custom values. -data one -data two ...")
-	flag.Var(&Template, "template", "Name of template(s). -template tmpl1 template tmpl2 ...")
+	//flag.Var(&Template, "template", "Name of template(s). -template tmpl1 template tmpl2 ...")
 	flag.Parse()
 	if err := check(); err != nil {
 		ExitWithError(err)
@@ -88,7 +88,7 @@ func check() error {
 	if *Mask == "" {
 		*Mask = "%d"
 	}
-	if Template.Count() == 0 {
+	if *Template == "" {
 		return ErrTemplateNotFound
 	}
 	if *Gen {

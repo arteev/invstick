@@ -25,3 +25,15 @@ Author
 ------
 
 Arteev Aleksey
+
+
+{{range $index, $element := . }}
+            <tr style="height: 2.12cm;">
+                <td style="width: 3.8cm; background-color: green; ">
+                <span>Номер: S -  {{$index}} - {{$element.Num}}</span>
+                <img src="{{.QRCode}}"></img>  
+                </td>
+                
+            </tr>                
+            {{end}}
+            
