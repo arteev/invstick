@@ -7,35 +7,82 @@
                     }
                     .borderdot{
                         border: 0px;
-                    }
-                    
+                    }                    
                 }
                 @media screen {
                     .borderdot{
-                            border: 1px dotted black;
+                        border: 1px dotted black;
                     }
                 }
                 .pager {
-                       margin-top:5px;margin-left:1.0cm; 
+                       margin-top:5px;
+                       margin-left:1.0cm; 
                 }
+
+                .stick {
+                    vertical-align:top;
+                    margin:2px;                                                            
+                }
+                .stick-text {
+                    font-style: normal;
+                    font-size: 24px;
+                    font-weight: bold;
+                    text-align:right;
+                    vertical-align:top;            
+                                                                                
+                }
+                .stick-company{
+                    font-size: 9px;                    
+                }
+                .qrcode {
+                    
+                    position:absolute;
+                    
+                }
+
+                .stick-w {
+                    width: 3.8cm;  
+                    
+                    vertical-align:top;
+                }
+                .stick-h {
+                    height: 2.12cm;
+                }
+                .table-stick {
+                    width: 19cm; 
+                    border-collapse: collapse;
+                    margin-top:1.07cm;
+                    margin-left:1.0cm;
+                    margin-right:1.0cm;
+                }
+                
             </style>        
             {{$ldata:=len .}}
             {{$data:=.}}
-            {{$pages:=len . | calcpages 65 | mkSliceRange 1}}            
+            {{$inpage:=65}}
+            {{$pages:=len . | calcpages $inpage | mkSliceRange 1}}            
             {{range $page := $pages }}            
-            <table  class="borderdot" style="width: 19cm; border-collapse: collapse; margin-top:1.07cm;margin-left:1.0cm;margin-right:1.0cm;" >
+            <table  class="borderdot table-stick">
             <tbody>                
                 {{range $x := mkSliceRange 0 13}}
-                    <tr style="height: 2.12cm;">                    
-                    {{range $y:= mkSliceRange 0 5 }}                                               
-                         {{$idx := mul $x 5 | add $y}}
-                         <td class="borderdot" style="width: 3.8cm;  margin-left:2px;">                             
+                    <tr class="stick-h">                    
+                    {{range $y:= mkSliceRange 0 5 }}     
+                         {{$idxdelta := add $page -1 | mul $inpage}}
+                         {{$idx := mul $x 5 | add $y|add $idxdelta  }}
+                         
+                         <td class="borderdot stick-w">                             
+                             <div class="stick">   
                              {{if lt $idx $ldata}}
                                 {{with $item := index $data $idx}}
-                                    <img src="{{$item.QRCode}}" />
-                                    <span>{{$item.Num}}</span>                                    
+                                    <img class="qrcode" src="{{$item.QRCode}}" />
+                                    <div class="stick-text"> 
+                                        <span class="stick-company">АО "Фармация"</span>
+                                    <div>{{$item.Num}}</div>
+                                    </stick>                                    
                                 {{end}}
                              {{end}}
+                             </div>
+              
                          </td>                           
                     {{end}}                    
                     </tr>
