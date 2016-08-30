@@ -15,7 +15,30 @@ This package can be installed with the go get command:
 
     go get github.com/arteev/invstick
     go install github.com/arteev/invstick
-        
+
+
+Quick start 
+-----------
+
+  Generation:
+  ```
+  invstick -gen -width=45 -heigth=45 -correction=h -encoding Auto -template templates/stickers-A4-65-38X21.2.gohtml -dir=./out -gen-start=1 -gen-count=65 -barcode=true -mask="%03d" -prefix=#
+  
+  ```
+
+  ![Result](img/invstick.png)
+
+
+  From pipe:
+  ```
+  printf "One\nTwo\n" | invstick -template templates/stickers-A4-65-38X21.2.gohtml -dir=./out
+  ```
+
+  From file (use @):
+  ```
+  invstick -template templates/stickers-A4-65-38X21.2.gohtml -dir=./out -data=@/home/user/list.txt
+  ```
+
 License
 -------
 
@@ -25,3 +48,4 @@ Author
 ------
 
 Arteev Aleksey
+ 
