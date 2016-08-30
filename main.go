@@ -86,7 +86,9 @@ func dataFromFile(filename string, sticks domain.StickersService) (bool, error) 
 				Num: text,
 			}
 			sticks.Create(stick)
-			CreateQRCode(stick)
+			if *flags.Barcode {
+				CreateQRCode(stick)
+			}
 		}
 		f.Close()
 
@@ -112,7 +114,9 @@ func dataReadArgs(sticks domain.StickersService) error {
 			Num: d,
 		}
 		sticks.Create(stick)
-		CreateQRCode(stick)
+		if *flags.Barcode {
+			CreateQRCode(stick)
+		}
 	}
 	return nil
 }
@@ -126,7 +130,9 @@ func dataGenerate(sticks domain.StickersService) error {
 			Num: data,
 		}
 		sticks.Create(stick)
-		CreateQRCode(stick)
+		if *flags.Barcode {
+			CreateQRCode(stick)
+		}
 	}
 	return nil
 }

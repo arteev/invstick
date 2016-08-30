@@ -76,7 +76,9 @@
                              <div class="stick">   
                              {{if lt $idx $ldata}}
                                 {{with $item := index $data $idx}}
+                                    {{if $item.QRCode}}
                                     <img class="qrcode" src="{{$item.QRCode}}" />
+                                    {{end}}
                                     <div class="stick-text"> 
                                         <span class="stick-company">АО "Фармация"</span>
                                     <div>{{$item.Num}}</div>

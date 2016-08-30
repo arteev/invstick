@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+//Version application
 const Version = "0.1"
 
 //Errors
@@ -41,25 +42,10 @@ var (
 	//QRCodes flags
 	CorrectionLevel = flag.String("correction", "M", "Error Correction Level: L recovers 7% of data;M recovers 15% of data;Q recovers 25% of data:H recovers 30% of data")
 	Encoding        = flag.String("encoding", "Auto", "Encoding mode for QR Codes. Auto,Numeric,AlphaNumeric,Unicode")
-	Width           = flag.Int("width", 100, "Width of each barcode")
-	Heigth          = flag.Int("heigth", 100, "Heigth of each barcode")
+	Width           = flag.Int("width", 100, "Width of barcode")
+	Heigth          = flag.Int("heigth", 100, "Heigth of barcode")
+	Barcode         = flag.Bool("barcode", true, "Generate QR Codes")
 )
-
-//UserData user set of strings
-type ArrayString []string
-
-func (d *ArrayString) String() string {
-	return fmt.Sprintf("%s", *d)
-}
-
-func (d *ArrayString) Set(value string) error {
-	*d = append(*d, value)
-	return nil
-}
-
-func (d *ArrayString) Count() int {
-	return len(*d)
-}
 
 func usage() {
 	fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
