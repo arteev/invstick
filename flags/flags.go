@@ -18,7 +18,8 @@ var (
 	ErrGenCount         = errors.New("Incorrect gen-count")
 	ErrCorrectionLevel  = errors.New("Incorrect error correction level for QR Codes")
 	ErrEncoding         = errors.New("Incorrect encoding mode for QR Codes")
-	ErrSizeBarCode      = errors.New("the dimensions QR Codes are incorrect")
+	ErrSizeBarCode      = errors.New("The dimensions QR Codes are incorrect")
+	ErrPosition         = errors.New("The position are incorrect")
 )
 
 //Flags cli
@@ -44,6 +45,8 @@ var (
 	Encoding        = flag.String("encoding", "Auto", "Encoding mode for QR Codes. Auto,Numeric,AlphaNumeric,Unicode")
 	Width           = flag.Int("width", 100, "Width of barcode")
 	Heigth          = flag.Int("heigth", 100, "Heigth of barcode")
+	Left            = flag.Int("left", 1, "Start horizontal position on sheet")
+	Top             = flag.Int("top", 1, "Start vertical position on sheet")
 	Barcode         = flag.Bool("barcode", true, "Generate QR Codes")
 )
 
@@ -58,6 +61,10 @@ func init() {
 	flag.Usage = usage
 	flag.Var(&Data, "data", "List of custom values. -data one -data two ...")
 	//flag.Var(&Template, "template", "Name of template(s). -template tmpl1 template tmpl2 ...")
+
+}
+
+func Parse() {
 	flag.Parse()
 	if err := check(); err != nil {
 		ExitWithError(err)
@@ -84,6 +91,9 @@ func check() error {
 	}
 	if *Width <= 0 || *Heigth <= 0 {
 		return ErrSizeBarCode
+	}
+	if *Left <= 0 || *Top <= 0 {
+		return ErrPosition
 	}
 	return nil
 }

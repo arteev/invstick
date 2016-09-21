@@ -1,4 +1,7 @@
 <html>
+    <head>
+        <meta charset="UTF-8">
+    </head>
     <body>
             <style type="text/css">
                 @media print {
@@ -23,6 +26,9 @@
                     vertical-align:top;
                     margin-top:4px;
                     margin-left:4px;                                                                                                   
+                }
+                .stickhide {
+                    display:none;
                 }
                 .stick-text {
                     font-style: normal;
@@ -62,32 +68,39 @@
             {{$ldata:=len .}}
             {{$data:=.}}
             {{$inpage:=65}}
-            {{$pages:=len . | calcpages $inpage | mkSliceRange 1}}            
+            {{$startxy:=  ((top |add -1) | mul 5) | add (left | add -1)  }}            
+            {{$pages:= mkSliceRange 1 (calcpages $inpage (add $startxy (len .)))}}            
             {{range $page := $pages }}            
+           
             <table  class="borderdot table-stick">
             <tbody>                
                 {{range $x := mkSliceRange 0 13}}
                     <tr class="stick-h">                    
-                    {{range $y:= mkSliceRange 0 5 }}     
-                         {{$idxdelta := add $page -1 | mul $inpage}}
-                         {{$idx := mul $x 5 | add $y|add $idxdelta  }}
-                         
-                         <td class="borderdot stick-w">                             
-                             <div class="stick">   
-                             {{if lt $idx $ldata}}
-                                {{with $item := index $data $idx}}
-                                    {{if $item.QRCode}}
-                                    <img class="qrcode" src="{{$item.QRCode}}" />
-                                    {{end}}
-                                    <div class="stick-text"> 
-                                        <span class="stick-company">АО "Фармация"</span>
-                                    <div>{{$item.Num}}</div>
-                                    </stick>                                    
+                    {{range $y:= mkSliceRange 0 5 }}                            
+                         {{$idx :=  add (mul $inpage (add $page -1))  (add $y (mul $x 5)) }}                                                                                                               
+                         <td class="borderdot stick-w">                              
+                             <div class="stick">  
+                                  {{if ge $idx $startxy}}
+                                     {{ $idx := add $idx (mul -1 $startxy)}}                                                
+
+                                            {{if lt $idx $ldata}}                                                    
+                                                {{with $item := index $data $idx}}
+                                                    {{if $item.QRCode}}
+                                                    <img class="qrcode" src="{{$item.QRCode}}" /> 
+                                                    {{end}}
+                                                    
+                                                    <div class="stick-text"> 
+                                                        <span class="stick-company">АО "Фармация"</span>
+                                                        <div>{{$item.Num}}</div> 
+                                                    </div>                                
+                                                {{end}}
+                                            {{end}}
+
+
                                 {{end}}
-                             {{end}}
-                             </div>
-              
+                             </div>                                        
                          </td>                           
+
                     {{end}}                    
                     </tr>
                 {{end}}                        

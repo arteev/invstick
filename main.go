@@ -172,7 +172,9 @@ func DoTemplate(sticks domain.StickersService) error {
 		"mkSliceRange": helpers.MkSliceRange,
 		"mul":          helpers.Mul,
 		"add":          helpers.Add,
-		"calcpages":    helpers.Calcpages}
+		"calcpages":    helpers.Calcpages,
+		"left":         func() int { return *flags.Left },
+		"top":          func() int { return *flags.Top }}
 
 	st, err := template.New(path.Base(*flags.Template)).Funcs(funcMap).ParseFiles(*flags.Template)
 	if err != nil {
@@ -200,6 +202,8 @@ func DoTemplate(sticks domain.StickersService) error {
 func main() {
 
 	var fmake FuncMakeData
+
+	flags.Parse()
 
 	if !*flags.Gen && flags.Data.Count() == 0 {
 		fi, err := os.Stdin.Stat()
