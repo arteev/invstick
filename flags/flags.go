@@ -25,11 +25,11 @@ var (
 //Flags cli
 var (
 	//List of templates
-	Template = flag.String("template", "", "Name of template(s). -template tmpl1 template tmpl2 ...")
-	Dir      = flag.String("dir", "", "Output directory")
 
-	Suffix = flag.String("suffix", "", "Optional.Use suffix for generation")
-	Prefix = flag.String("prefix", "", "Use prefix for generation")
+	Dir      = flag.String("dir", "", "Output directory")
+	Template ArrayString
+	Suffix   = flag.String("suffix", "", "Optional.Use suffix for generation")
+	Prefix   = flag.String("prefix", "", "Use prefix for generation")
 
 	//generation data
 	Gen      = flag.Bool("gen", false, "Use for generation data")
@@ -48,6 +48,9 @@ var (
 	Left            = flag.Int("left", 1, "Start horizontal position on sheet")
 	Top             = flag.Int("top", 1, "Start vertical position on sheet")
 	Barcode         = flag.Bool("barcode", true, "Generate QR Codes")
+
+	//web
+	WebAddr = flag.String("listen", "", "Use web interface on :80 or other")
 )
 
 func usage() {
@@ -59,6 +62,8 @@ func usage() {
 
 func init() {
 	flag.Usage = usage
+	//Template = flag.String("template", "", "Name of template(s). -template tmpl1 template tmpl2 ...")
+	flag.Var(&Template, "template", "Name of template(s). -template tmpl1 template tmpl2 ...")
 	flag.Var(&Data, "data", "List of custom values. -data one -data two ...")
 	//flag.Var(&Template, "template", "Name of template(s). -template tmpl1 template tmpl2 ...")
 
@@ -78,10 +83,14 @@ func ExitWithError(e error) {
 }
 
 func check() error {
+	if *WebAddr != "" {
+		return nil
+	}
+
 	if *Mask == "" {
 		*Mask = "%d"
 	}
-	if *Template == "" {
+	if Template.Count() == 0 {
 		return ErrTemplateNotFound
 	}
 	if *Gen {

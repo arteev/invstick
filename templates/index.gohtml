@@ -1,0 +1,125 @@
+{{$Title:= "Stikers"}}
+{{template "header" $Title}}
+    <br>    
+    <form method="POST" action="/do" enctype="multipart/form-data" target="_blank" >
+        <table class="width:50%">
+            <tr>
+                <td>Шаблон</td>
+                <td> <select name="template">
+                    {{range .Templates}}
+                        <option value="{{.}}">{{.}}</option>
+                    {{end}}
+                    </select> 
+                </td>
+            </tr>
+            <tr>
+                <td> <label for="name">Заголовок стикера</label></td>
+                <td><input type="text" name="name" id="name" value="АО Фармация" ></td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="checkbox" name="barcode" id="barcode" checked >
+                    <label for="barcode">Генерация штрих-кода</label>
+                </td>
+                <td>                     
+                </td>
+            </tr>
+            
+            <tr>
+                <td>Коррекция ошибок</td>
+                <td>
+                    <select name="level" id="level">
+                        <option value="L">L(7%)</option>
+                        <option value="M">M(15%)</option>
+                        <option value="Q">Q(25%)</option>
+                        <option value="H">H(30%)</option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <td> <label for="encoding">Кодировка</label></td>
+                <td>
+                    <select name="encoding" id="encoding">
+                        <option value="">Auto</option>
+                        <option value="">Numeric</option>
+                        <option value="">AlphaNumeric</option>
+                        <option value="">Unicode</option>
+                    </select>	
+                </td>
+            </tr>
+            <tr>
+                <td>Размер:</td>
+                <td>                    
+                    <label for="width">WxH</label>
+                    <input type="number" name="width" value="45">                    
+                    <label for="height">x</label>
+                    <input type="number" name="height" value="45">
+                </td>
+            </tr>
+            <tr>
+                <td>Координаты начала</td>
+                <td>
+                    <label for="left">Left</label>
+                    <input type="number" name="left" id="left" value="1">                    
+                    <label for="top">Top</label>
+                    <input type="number" name="top" id="top" value="1">
+                </td>
+            </tr>
+
+            <tr>
+                <td>Префикс</td>
+                <td><input type="text" name="prefix" value=""></td>
+            </tr>
+            <tr>
+                <td>Суффикс</td>
+                <td><input type="text" name="suffix" value=""></td>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="radio"  name="datain" value="gen" id="gen" checked>
+                    <label for="gen">Генерировать данные</label>
+                </td>
+                <td>
+                    <label for="gen-mask">Маска</label>
+                    <input type="text" name="gen-mask" id="gen-mask" value="%03d" placeholder="%03d">
+
+                    <label for="gen-count">Количество</label>
+                    <input type="number" name="gen-count" id="gen-count" value="10">   
+
+                    <label for="gen-start">Начать</label>
+                    <input type="number" name="gen-start" id="gen-start" value="1">
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="radio"  name="datain" value="file" id="infile">
+                    <label for="infile">Данные из файла</label>
+                </td>
+                <td>
+                    <input type="file" name="userfile">
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>
+                    <input type="radio"  name="datain" value="data" id="indata">
+                    <label for="indata">Пользовательские данные</label>
+                </td>
+                <td>
+                    <textarea rows="5" cols="40" name="userdata"></textarea>
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td><input type="submit"></td>
+            </tr>
+
+        </table>        
+    </form>
+
+{{template "footer"}}

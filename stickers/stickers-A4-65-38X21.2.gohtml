@@ -87,10 +87,9 @@
                                                 {{with $item := index $data $idx}}
                                                     {{if $item.QRCode}}
                                                     <img class="qrcode" src="{{$item.QRCode}}" /> 
-                                                    {{end}}
-                                                    
+                                                    {{end}}                                                    
                                                     <div class="stick-text"> 
-                                                        <span class="stick-company">АО "Фармация"</span>
+                                                        <span class="stick-company">{{$item.Name}}</span>
                                                         <div>{{$item.Num}}</div> 
                                                     </div>                                
                                                 {{end}}
