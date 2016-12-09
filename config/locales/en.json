@@ -1,0 +1,21 @@
+{
+    "template": "Template",
+    "header": "Header",    
+    "genbarcode": "Generate QR-Code",
+    "corretlevel": "Correction level",
+    "encoding": "Encoding",
+    "size": "Size",
+    "locationstart": "Location from",
+    "left": "Left",
+    "right": "Right",
+    "suffix":"Suffix",
+    "prefix":"Prefix",
+    "gendata":"Data generation",
+    "mask":"Mask",
+    "count":"Count",
+    "startfrom":"Start from",
+    "fromfile":"Data from file",
+    "userdata":"User data",
+    "dogenerate":"Do it"
+
+}

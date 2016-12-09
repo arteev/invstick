@@ -1,10 +1,24 @@
 {{$Title:= "Stikers"}}
 {{template "header" $Title}}
     <br>    
+    <form action="" enctype="text/plain">
+        <div>
+            <label for="lang">Language:</label>
+            <select name="lang" id="lang" >
+                {{$curloc:=.Locale}}
+                {{range .Locales}}
+                
+                <option value="{{.}}"  {{if eq $curloc .}}selected{{end}}>{{.}}</option>
+                {{end}}
+            </select>
+            <input type="submit">
+        </div>
+    </form>
+    <br/>
     <form method="POST" action="/do" enctype="multipart/form-data" target="_blank" >
         <table class="width:50%">
             <tr>
-                <td>Шаблон</td>
+                <td> {{translate "template" .Locale}} </td>
                 <td> <select name="template">
                     {{range .Templates}}
                         <option value="{{.}}">{{.}}</option>
@@ -13,20 +27,20 @@
                 </td>
             </tr>
             <tr>
-                <td> <label for="name">Заголовок стикера</label></td>
+                <td> <label for="name">{{translate "header" .Locale}}</label></td>
                 <td><input type="text" name="name" id="name" value="АО Фармация" ></td>
             </tr>
             <tr>
                 <td>
                     <input type="checkbox" name="barcode" id="barcode" checked >
-                    <label for="barcode">Генерация штрих-кода</label>
+                    <label for="barcode">{{translate "genbarcode" .Locale}}</label>
                 </td>
                 <td>                     
                 </td>
             </tr>
             
             <tr>
-                <td>Коррекция ошибок</td>
+                <td>{{translate "correctlevel" .Locale}}</td>
                 <td>
                     <select name="level" id="level">
                         <option value="L">L(7%)</option>
@@ -38,7 +52,7 @@
             </tr>
 
             <tr>
-                <td> <label for="encoding">Кодировка</label></td>
+                <td> <label for="encoding">{{translate "encoding" .Locale}}</label></td>
                 <td>
                     <select name="encoding" id="encoding">
                         <option value="">Auto</option>
@@ -49,7 +63,7 @@
                 </td>
             </tr>
             <tr>
-                <td>Размер:</td>
+                <td>{{translate "size" .Locale}}</td>
                 <td>                    
                     <label for="width">WxH</label>
                     <input type="number" name="width" value="45">                    
@@ -58,37 +72,37 @@
                 </td>
             </tr>
             <tr>
-                <td>Координаты начала</td>
+                <td>{{translate "locationstart" .Locale}}</td>
                 <td>
-                    <label for="left">Left</label>
+                    <label for="left">{{translate "left" .Locale}}</label>
                     <input type="number" name="left" id="left" value="1">                    
-                    <label for="top">Top</label>
+                    <label for="top">{{translate "top" .Locale}}</label>
                     <input type="number" name="top" id="top" value="1">
                 </td>
             </tr>
 
             <tr>
-                <td>Префикс</td>
+                <td>{{translate "prefix" .Locale}}</td>
                 <td><input type="text" name="prefix" value=""></td>
             </tr>
             <tr>
-                <td>Суффикс</td>
+                <td>{{translate "suffix" .Locale}}</td>
                 <td><input type="text" name="suffix" value=""></td>
             </tr>
 
             <tr>
                 <td>
                     <input type="radio"  name="datain" value="gen" id="gen" checked>
-                    <label for="gen">Генерировать данные</label>
+                    <label for="gen">{{translate "gendata" .Locale}}</label>
                 </td>
                 <td>
-                    <label for="gen-mask">Маска</label>
+                    <label for="gen-mask">{{translate "mask" .Locale}}</label>
                     <input type="text" name="gen-mask" id="gen-mask" value="%03d" placeholder="%03d">
 
-                    <label for="gen-count">Количество</label>
+                    <label for="gen-count">{{translate "count" .Locale}}</label>
                     <input type="number" name="gen-count" id="gen-count" value="10">   
 
-                    <label for="gen-start">Начать</label>
+                    <label for="gen-start">{{translate "startfrom" .Locale}}</label>
                     <input type="number" name="gen-start" id="gen-start" value="1">
                 </td>
             </tr>
@@ -96,7 +110,7 @@
             <tr>
                 <td>
                     <input type="radio"  name="datain" value="file" id="infile">
-                    <label for="infile">Данные из файла</label>
+                    <label for="infile">{{translate "fromfile" .Locale}}</label>
                 </td>
                 <td>
                     <input type="file" name="userfile">
@@ -107,7 +121,7 @@
             <tr>
                 <td>
                     <input type="radio"  name="datain" value="data" id="indata">
-                    <label for="indata">Пользовательские данные</label>
+                    <label for="indata">{{translate "userdata" .Locale}}</label>
                 </td>
                 <td>
                     <textarea rows="5" cols="40" name="userdata"></textarea>
@@ -116,7 +130,7 @@
 
             <tr>
                 <td></td>
-                <td><input type="submit"></td>
+                <td><input type="submit" value="{{translate "dogenerate" .Locale}}"></td>
             </tr>
 
         </table>        

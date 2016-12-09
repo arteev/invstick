@@ -31,6 +31,8 @@ import (
 	"github.com/arteev/invstick/model"
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/qr"
+
+	hw "github.com/arteev/invstick/view/helpers"
 )
 
 type FuncMakeData func(stick domain.StickersService) error
@@ -237,9 +239,12 @@ var validPath = regexp.MustCompile("^/(index|do|barcode)")
 //var validPath = regexp.MustCompile("^/(index|go)/([a-zA-Z0-9]+)$")
 
 func index(w http.ResponseWriter, r *http.Request) {
-	//TODO:parse once
-	tpl = template.Must(template.ParseGlob("templates/*"))
-	tpl.ExecuteTemplate(w, "index.gohtml", model.Data)
+	data := model.Data
+	lang := r.FormValue("lang")
+	if lang != "" {
+		data.Locale = lang
+	}
+	tpl.ExecuteTemplate(w, "index.gohtml", data)
 }
 
 func strtointdef(s string, def int) int {
@@ -396,13 +401,22 @@ func makeHandler(fn http.HandlerFunc) http.HandlerFunc {
 }
 func starthttp() {
 	//TODO: name folder with stickers from config
+	hw.LoadLocales("config/locales")
 	templates := helpers.GetStickerTemplates("stickers", ".gohtml")
 	if len(templates) == 0 {
 		templates = append(templates, "(not found)")
 	}
 
 	model.Data.Templates = templates
-	tpl = template.Must(template.ParseGlob("templates/*"))
+	model.Data.Locales = hw.Locales()
+	model.Data.Locale = "en"
+
+	//tpl = template.Must(template.ParseGlob("templates/*"))
+	funcMap := map[string]interface{}{
+		"translate": hw.Translate,
+	}
+
+	tpl = template.Must(template.New("").Funcs(funcMap).ParseGlob("templates/*"))
 
 	http.HandleFunc("/", makeHandler(index))
 	http.HandleFunc("/do", makeHandler(do))
