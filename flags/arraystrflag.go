@@ -20,3 +20,7 @@ func (d *ArrayString) Set(value string) error {
 func (d *ArrayString) Count() int {
 	return len(*d)
 }
+
+func (d *ArrayString) Strings() []string {
+	return []string(*d)
+}

@@ -1,6 +1,10 @@
 package helpers
 
-import "math"
+import (
+	"math"
+	"os"
+	"path/filepath"
+)
 
 func MkSlice(args ...interface{}) []interface{} {
 	return args
@@ -30,4 +34,15 @@ func MkSliceRange(from, count int) (result []int) {
 		result = append(result, i)
 	}
 	return
+}
+
+func GetStickerTemplates(path, ext string) []string {
+	files := make([]string, 0)
+	filepath.Walk(filepath.Join(path), func(path string, info os.FileInfo, err error) error {
+		if (!info.IsDir()) && filepath.Ext(info.Name()) == ext {
+			files = append(files, info.Name())
+		}
+		return nil
+	})
+	return files
 }

@@ -1,0 +1,138 @@
+{{$Title:= "Stikers"}}
+{{template "header" $Title}}
+
+    <div class="container">
+        
+        <div class="row">
+            <div class="col-xs-9 col-xs-offset-1">
+                <div class="page-header">            
+                    <h3>Stikers generator</h3>            
+                </div>
+            </div>
+            <div class="col-xs-2 ">
+                <br/>
+                <form action="" enctype="text/plain"  class="form-inline">
+                    <div class="form-group">
+                        <label for="lang">Language:</label>
+                        <select class="form-control" name="lang" id="lang" onchange="this.form.submit()" >
+                            {{$curloc:=.Locale}}
+                            {{range .Locales}}                
+                            <option value="{{.}}"  {{if eq $curloc .}}selected{{end}}>{{ localename .}}</option>
+                            {{end}}
+                        </select>            
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-2">
+                <form method="POST" action="/do" enctype="multipart/form-data" target="_blank"  class="form-horizontal">
+                    <div class="form-group">
+                        <label for="template">{{translate "template" .Locale}}</label>
+                        <select  class="form-control" name="template" id="template">
+                                {{range .Templates}}
+                                    <option value="{{.}}">{{.}}</option>
+                                {{end}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">{{translate "header" .Locale}}</label>
+                        <input class="form-control" type="text" name="name" id="name" placeholder="{{translate "titlestick" .Locale}}" >
+                    </div>
+                    <div class="form-group checkbox">
+                        <label>
+                            <input type="checkbox" name="barcode" id="barcode" checked >
+                            {{translate "genbarcode" .Locale}}
+                        </label>                        
+                    </div>
+                    <div class="form-group">
+                        <label for="level">{{translate "correсtlevel" .Locale}}</label>
+                        <select class="form-control" name="level" id="level">
+                                    <option value="L">L(7%)</option>
+                                    <option value="M">M(15%)</option>
+                                    <option value="Q">Q(25%)</option>
+                                    <option value="H">H(30%)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="encoding">{{translate "encoding" .Locale}}</label>
+                         <select class="form-control" name="encoding" id="encoding">
+                                    <option value="">Auto</option>
+                                    <option value="">Numeric</option>
+                                    <option value="">AlphaNumeric</option>
+                                    <option value="">Unicode</option>
+                        </select>	
+                    </div>
+
+                    <div class="form-group">
+                        <label for="width">{{translate "size" .Locale}}</label>
+                        <div class="form-inline">                        
+                            <input class="form-control" type="number" name="width" value="45" id="width">                    
+                            x
+                            <input  class="form-control" type="number" name="height" value="45" id="height">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="left">{{translate "locationstart" .Locale}}</label>
+                        <div class="form-inline">                        
+                        <label for="left">{{translate "left" .Locale}}</label>
+                        <input class="form-control" type="number" name="left" id="left" value="1">                    
+                        <label for="top">{{translate "top" .Locale}}</label>
+                        <input class="form-control" type="number" name="top" id="top" value="1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="prefix">{{translate "prefix" .Locale}}</label>
+                        <input class="form-control" type="text" name="prefix" value="" id="prefix" >
+                        
+                    </div>
+                    <div class="form-group">
+                        <label for="prefix">{{translate "suffix" .Locale}}</label>
+                        <input class="form-control" type="text" name="suffix" value="" id="suffix" >                       
+                    </div>
+
+                    <div class="radio form-group">
+                        <label>
+                             <input type="radio"  name="datain" value="gen" id="gen" checked >
+                            {{translate "gendata" .Locale}}
+                        </label>
+                    </div>
+                    <div class="form-group form-inline">
+                        <label for="gen-mask">{{translate "mask" .Locale}}</label>
+                        <input class="form-control" type="text" name="gen-mask" id="gen-mask" value="%03d" placeholder="%03d">
+
+                        <label for="gen-count">{{translate "count" .Locale}}</label>
+                        <input class="form-control" type="number" name="gen-count" id="gen-count" value="10">   
+
+                        <label for="gen-start">{{translate "startfrom" .Locale}}</label>
+                        <input class="form-control" type="number" name="gen-start" id="gen-start" value="1">
+                    </div>                                           
+
+                    <div class="radio form-group">
+                        <label>
+                            <input type="radio"  name="datain" value="file" id="infile">
+                            {{translate "fromfile" .Locale}}                              
+                        </label>                        
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" type="file" name="userfile">
+                    </div>
+
+                    <div class="radio form-group">
+                        <label>
+                            <input type="radio"  name="datain" value="data" id="indata">
+                            {{translate "userdata" .Locale}}
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <textarea rows="5" cols="40" name="userdata"></textarea>
+                    </div>
+                    <button class="btn btn-primary" type="submit">"{{translate "dogenerate" .Locale}}"</button>                            
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+{{template "footer"}}
