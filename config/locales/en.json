@@ -1,4 +1,5 @@
 {
+    "_name":"English",
     "template": "Template",
     "header": "Header",    
     "genbarcode": "Generate QR-Code",
@@ -16,6 +17,7 @@
     "startfrom":"Start from",
     "fromfile":"Data from file",
     "userdata":"User data",
-    "dogenerate":"Do it"
+    "dogenerate":"Do it",
+    "titlestick": "Title of stick"
 
 }

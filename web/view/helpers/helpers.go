@@ -9,7 +9,10 @@ import (
 	"strings"
 )
 
-var locales = make(map[string]map[string]string)
+var (
+	locales = make(map[string]map[string]string)
+	names   = make(map[string]string)
+)
 
 func load(dir string, filename string) error {
 	ext := filepath.Ext(filename)
@@ -28,6 +31,7 @@ func load(dir string, filename string) error {
 		mloc[k] = v.(string)
 	}
 	locales[locale] = mloc
+	names[locale] = Translate("_name", locale)
 	return nil
 }
 
@@ -59,4 +63,12 @@ func Locales() []string {
 	}
 	sort.Strings(ls)
 	return ls
+}
+
+func NameLocale(l string) string {
+	s, ok := names[l]
+	if !ok {
+		return l
+	}
+	return s
 }

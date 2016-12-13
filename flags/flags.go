@@ -44,7 +44,7 @@ var (
 	CorrectionLevel = flag.String("correction", "M", "Error Correction Level: L recovers 7% of data;M recovers 15% of data;Q recovers 25% of data:H recovers 30% of data")
 	Encoding        = flag.String("encoding", "Auto", "Encoding mode for QR Codes. Auto,Numeric,AlphaNumeric,Unicode")
 	Width           = flag.Int("width", 100, "Width of barcode")
-	Heigth          = flag.Int("heigth", 100, "Heigth of barcode")
+	Height          = flag.Int("height", 100, "Height of barcode")
 	Left            = flag.Int("left", 1, "Start horizontal position on sheet")
 	Top             = flag.Int("top", 1, "Start vertical position on sheet")
 	Barcode         = flag.Bool("barcode", true, "Generate QR Codes")
@@ -98,7 +98,7 @@ func check() error {
 			return ErrGenCount
 		}
 	}
-	if *Width <= 0 || *Heigth <= 0 {
+	if *Width <= 0 || *Height <= 0 {
 		return ErrSizeBarCode
 	}
 	if *Left <= 0 || *Top <= 0 {

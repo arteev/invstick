@@ -22,7 +22,7 @@ Quick start
 
   Generation:
   ```
-  invstick -gen -width=45 -heigth=45 -correction=h -encoding Auto -template templates/stickers-A4-65-38X21.2.gohtml -dir=./out -gen-start=1 -gen-count=65 -barcode=true -mask="%03d" -prefix=#
+  invstick -gen -width=45 -height=45 -correction=h -encoding Auto -template templates/stickers-A4-65-38X21.2.gohtml -dir=./out -gen-start=1 -gen-count=65 -barcode=true -mask="%03d" -prefix=#
   
   ```
 
@@ -37,6 +37,11 @@ Quick start
   From file (use @):
   ```
   invstick -template templates/stickers-A4-65-38X21.2.gohtml -dir=./out -data=@/home/user/list.txt
+  ```
+
+  Web:
+  ```
+    invstick -listen=:8080
   ```
 
 License

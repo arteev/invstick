@@ -40,7 +40,7 @@ func CreateQRCode(stick *domain.Sticker) error {
 	filename := path.Join(*flags.Dir, stick.ID+"_sticker.png")
 	fout, _ := os.Create(filename)
 	defer fout.Close()
-	err := barcode.GenBarcode(fout, stick.Num, *flags.Width, *flags.Heigth, *flags.CorrectionLevel, *flags.Encoding)
+	err := barcode.GenBarcode(fout, stick.Num, *flags.Width, *flags.Height, *flags.CorrectionLevel, *flags.Encoding)
 	if err != nil {
 		return err
 	}
@@ -210,10 +210,13 @@ var validPath = regexp.MustCompile("^/(index|do|barcode)")
 
 func index(w http.ResponseWriter, r *http.Request) {
 
-	funcMap := map[string]interface{}{
-		"translate": hw.Translate,
+	if os.Getenv("mode") == "dev" {
+		funcMap := map[string]interface{}{
+			"translate":  hw.Translate,
+			"localename": hw.NameLocale,
+		}
+		tpl = template.Must(template.New("").Funcs(funcMap).ParseGlob("web/templates/*"))
 	}
-	tpl = template.Must(template.New("").Funcs(funcMap).ParseGlob("web/templates/*"))
 
 	data := model.Data
 	lang := r.FormValue("lang")
@@ -343,7 +346,6 @@ func do(w http.ResponseWriter, r *http.Request) {
 }
 func makeHandler(fn http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Println(r.URL.Path)
 		m := validPath.FindStringSubmatch(r.URL.Path)
 		if r.URL.Path != "/" && m == nil {
 			http.NotFound(w, r)
@@ -366,7 +368,8 @@ func starthttp() {
 
 	//tpl = template.Must(template.ParseGlob("templates/*"))
 	funcMap := map[string]interface{}{
-		"translate": hw.Translate,
+		"translate":  hw.Translate,
+		"localename": hw.NameLocale,
 	}
 
 	tpl = template.Must(template.New("").Funcs(funcMap).ParseGlob("web/templates/*"))
