@@ -2,7 +2,7 @@
     "template": "Template",
     "header": "Header",    
     "genbarcode": "Generate QR-Code",
-    "corretlevel": "Correction level",
+    "correctlevel": "Correction level",
     "encoding": "Encoding",
     "size": "Size",
     "locationstart": "Location from",

@@ -3,7 +3,6 @@ package main
 import (
 	"fmt" //
 	"html/template"
-	"image/png"
 	"mime/multipart"
 	"os"
 	"path"
@@ -24,66 +23,29 @@ import (
 
 	"net/url"
 
+	"github.com/arteev/invstick/barcode"
 	"github.com/arteev/invstick/config"
 	"github.com/arteev/invstick/domain"
 	"github.com/arteev/invstick/flags"
 	"github.com/arteev/invstick/helpers"
-	"github.com/arteev/invstick/model"
-	"github.com/boombuler/barcode"
-	"github.com/boombuler/barcode/qr"
+	"github.com/arteev/invstick/web/model"
 
-	hw "github.com/arteev/invstick/view/helpers"
+	hw "github.com/arteev/invstick/web/view/helpers"
 )
 
 type FuncMakeData func(stick domain.StickersService) error
 
-func StringECL(level string) qr.ErrorCorrectionLevel {
-	switch level {
-	case "L":
-		return qr.L
-	case "M":
-		return qr.M
-	case "Q":
-		return qr.Q
-	case "H":
-		return qr.H
-	}
-	return qr.M
-}
-
-func Encoding(value string) qr.Encoding {
-	switch value {
-	case "Auto":
-		return qr.Auto
-	case "Numeric":
-		return qr.Numeric
-	case "AlphaNumeric":
-		return qr.AlphaNumeric
-	case "Unicode":
-		return qr.Unicode
-	}
-	return qr.Auto
-}
-
-//CreateQRCode returns create QRCode,save to png file and retruns url
-func CreateQRCode(stick *domain.Sticker) {
+//CreateQRCode create QRCode,save to png file. retruns error when failed
+func CreateQRCode(stick *domain.Sticker) error {
 	filename := path.Join(*flags.Dir, stick.ID+"_sticker.png")
 	fout, _ := os.Create(filename)
 	defer fout.Close()
-	qrcode, err := qr.Encode(stick.Num, StringECL(*flags.CorrectionLevel), Encoding(*flags.Encoding))
+	err := barcode.GenBarcode(fout, stick.Num, *flags.Width, *flags.Heigth, *flags.CorrectionLevel, *flags.Encoding)
 	if err != nil {
-		panic(err)
-	}
-	qrcode, err = barcode.Scale(qrcode, *flags.Width, *flags.Heigth)
-	if err != nil {
-		panic(err)
-	}
-	err = png.Encode(fout, qrcode)
-	if err != nil {
-		panic(err)
+		return err
 	}
 	stick.QRCode = stick.ID + "_sticker.png"
-
+	return nil
 }
 
 func dataFromFile(filename string, sticks domain.StickersService) (bool, error) {
@@ -102,7 +64,9 @@ func dataFromFile(filename string, sticks domain.StickersService) (bool, error) 
 			}
 			sticks.Create(stick)
 			if *flags.Barcode {
-				CreateQRCode(stick)
+				if err := CreateQRCode(stick); err != nil {
+					return false, err
+				}
 			}
 		}
 		f.Close()
@@ -130,7 +94,9 @@ func dataReadArgs(sticks domain.StickersService) error {
 		}
 		sticks.Create(stick)
 		if *flags.Barcode {
-			CreateQRCode(stick)
+			if err := CreateQRCode(stick); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -160,7 +126,9 @@ func dataGenerate(sticks domain.StickersService) error {
 		}
 		sticks.Create(stick)
 		if *flags.Barcode {
-			CreateQRCode(stick)
+			if err := CreateQRCode(stick); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -190,7 +158,9 @@ func dataFromPipe(sticks domain.StickersService) error {
 			Num: s,
 		}
 		sticks.Create(stick)
-		CreateQRCode(stick)
+		if err := CreateQRCode(stick); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -239,6 +209,12 @@ var validPath = regexp.MustCompile("^/(index|do|barcode)")
 //var validPath = regexp.MustCompile("^/(index|go)/([a-zA-Z0-9]+)$")
 
 func index(w http.ResponseWriter, r *http.Request) {
+
+	funcMap := map[string]interface{}{
+		"translate": hw.Translate,
+	}
+	tpl = template.Must(template.New("").Funcs(funcMap).ParseGlob("web/templates/*"))
+
 	data := model.Data
 	lang := r.FormValue("lang")
 	if lang != "" {
@@ -256,17 +232,9 @@ func strtointdef(s string, def int) int {
 }
 
 func rendersticks(w http.ResponseWriter, r *http.Request, c config.Config) error {
-	//buf := make
-	/*buf, err := json.Marshal(&c)
-	if err != nil {
-		return err
-	}
-	w.Write(buf)*/
-	//prepare data
 	var e error
 	switch c.ModeData {
 	case config.ModeUserData:
-		//c.Data = strings.Split(r.FormValue("userdata"), " ;,")
 		c.Data = strings.FieldsFunc(r.FormValue("userdata"), func(r rune) bool {
 			return r == ' ' || r == ';' || r == ',' || r == '\n'
 		})
@@ -316,11 +284,7 @@ func rendersticks(w http.ResponseWriter, r *http.Request, c config.Config) error
 			u.RawQuery = q.Encode()
 			stick.QRCode = u.String()
 		}
-		/*
-			CreateQRCode(stick)
-		}*/
 	}
-
 	err := execTemplate(w, sticks, c.Template)
 	if err != nil {
 		return err
@@ -330,20 +294,9 @@ func rendersticks(w http.ResponseWriter, r *http.Request, c config.Config) error
 
 func getbarcode(w http.ResponseWriter, r *http.Request) {
 	//  /barcode?c=L&e=&h=45&val=1&w=45
-	qrcode, err := qr.Encode(r.FormValue("val"), StringECL(r.FormValue("c")), Encoding(r.FormValue("e")))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	width := strtointdef(r.FormValue("w"), 100)
 	height := strtointdef(r.FormValue("h"), 100)
-	qrcode, err = barcode.Scale(qrcode, width, height)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	err = png.Encode(w, qrcode)
+	err := barcode.GenBarcode(w, r.FormValue("val"), width, height, r.FormValue("e"), r.FormValue("c"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -416,7 +369,10 @@ func starthttp() {
 		"translate": hw.Translate,
 	}
 
-	tpl = template.Must(template.New("").Funcs(funcMap).ParseGlob("templates/*"))
+	tpl = template.Must(template.New("").Funcs(funcMap).ParseGlob("web/templates/*"))
+
+	fs := http.FileServer(http.Dir("web/static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	http.HandleFunc("/", makeHandler(index))
 	http.HandleFunc("/do", makeHandler(do))
