@@ -1,13 +1,16 @@
 package config
 
+//A Mode obtaining data for stickers
 type Mode int
 
+//Mode receiving data
 const (
 	ModeGenerate = Mode(0)
 	ModeUserData = Mode(1)
 	ModeFile     = Mode(2)
 )
 
+//Config settings for rendering stickers
 type Config struct {
 	Template        string
 	Name            string

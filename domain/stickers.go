@@ -1,5 +1,6 @@
 package domain
 
+//A Sticker storing data of sticker
 type Sticker struct {
 	Name   string
 	ID     string
@@ -7,6 +8,7 @@ type Sticker struct {
 	QRCode string
 }
 
+//StickersService stickers collection
 type StickersService interface {
 	Create(s *Sticker)
 	Stickers() []*Sticker

@@ -19,7 +19,7 @@ func TestStickers(t *testing.T) {
 	}
 
 	if stickersSlice.genid != 1 {
-		t.Errorf("Excepted stikersSlice.genid=1, got %s\n", stickersSlice.genid)
+		t.Errorf("Excepted stikersSlice.genid=1, got %d\n", stickersSlice.genid)
 	}
 
 	sarr := stickers.Stickers()

@@ -50,8 +50,5 @@ func GenBarcode(wr io.Writer, content string, width, height int, encoding, level
 		return err
 	}
 	err = png.Encode(wr, qrcode)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }

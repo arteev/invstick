@@ -16,12 +16,10 @@ func (b *sliceStickers) Create(s *Sticker) {
 }
 
 func (b *sliceStickers) Stickers() (result []*Sticker) {
-	for _, s := range b.stickers {
-		result = append(result, s)
-	}
-	return
+	return b.stickers
 }
 
+// StickersSlice returns new StickersService
 func StickersSlice() StickersService {
 	return &sliceStickers{}
 }

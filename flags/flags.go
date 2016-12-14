@@ -69,6 +69,7 @@ func init() {
 
 }
 
+//Parse arguments of command line
 func Parse() {
 	flag.Parse()
 	if err := check(); err != nil {
@@ -76,6 +77,7 @@ func Parse() {
 	}
 }
 
+//ExitWithError - close the program with an error "e"
 func ExitWithError(e error) {
 	fmt.Fprintln(os.Stderr, e)
 	flag.Usage()

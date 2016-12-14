@@ -21,6 +21,7 @@ func (d *ArrayString) Count() int {
 	return len(*d)
 }
 
+//Strings retruns copy of values
 func (d *ArrayString) Strings() []string {
 	return []string(*d)
 }

@@ -33,14 +33,17 @@ import (
 	hw "github.com/arteev/invstick/web/view/helpers"
 )
 
-type FuncMakeData func(stick domain.StickersService) error
+type funcMakeData func(stick domain.StickersService) error
 
 //CreateQRCode create QRCode,save to png file. retruns error when failed
 func CreateQRCode(stick *domain.Sticker) error {
 	filename := path.Join(*flags.Dir, stick.ID+"_sticker.png")
-	fout, _ := os.Create(filename)
+	fout, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
 	defer fout.Close()
-	err := barcode.GenBarcode(fout, stick.Num, *flags.Width, *flags.Height, *flags.CorrectionLevel, *flags.Encoding)
+	err = barcode.GenBarcode(fout, stick.Num, *flags.Width, *flags.Height, *flags.CorrectionLevel, *flags.Encoding)
 	if err != nil {
 		return err
 	}
@@ -181,12 +184,9 @@ func execTemplate(wr io.Writer, sticks domain.StickersService, tmpls ...string) 
 	}
 
 	err = st.Execute(wr, sticks.Stickers())
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
-func DoTemplate(sticks domain.StickersService) error {
+func doTemplate(sticks domain.StickersService) error {
 
 	var out io.Writer
 	if *flags.Dir == "" {
@@ -223,7 +223,11 @@ func index(w http.ResponseWriter, r *http.Request) {
 	if lang != "" {
 		data.Locale = lang
 	}
-	tpl.ExecuteTemplate(w, "index.gohtml", data)
+	err := tpl.ExecuteTemplate(w, "index.gohtml", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func strtointdef(s string, def int) int {
@@ -289,10 +293,7 @@ func rendersticks(w http.ResponseWriter, r *http.Request, c config.Config) error
 		}
 	}
 	err := execTemplate(w, sticks, c.Template)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 func getbarcode(w http.ResponseWriter, r *http.Request) {
@@ -357,36 +358,32 @@ func makeHandler(fn http.HandlerFunc) http.HandlerFunc {
 func starthttp() {
 	//TODO: name folder with stickers from config
 	hw.LoadLocales("config/locales")
-	templates := helpers.GetStickerTemplates("stickers", ".gohtml")
+	templates, err := helpers.GetStickerTemplates("stickers", ".gohtml")
+	if err != nil {
+		log.Fatalln(err)
+	}
 	if len(templates) == 0 {
 		templates = append(templates, "(not found)")
 	}
-
 	model.Data.Templates = templates
 	model.Data.Locales = hw.Locales()
 	model.Data.Locale = "en"
-
-	//tpl = template.Must(template.ParseGlob("templates/*"))
 	funcMap := map[string]interface{}{
 		"translate":  hw.Translate,
 		"localename": hw.NameLocale,
 	}
-
 	tpl = template.Must(template.New("").Funcs(funcMap).ParseGlob("web/templates/*"))
-
 	fs := http.FileServer(http.Dir("web/static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
-
 	http.HandleFunc("/", makeHandler(index))
 	http.HandleFunc("/do", makeHandler(do))
 	http.HandleFunc("/barcode", makeHandler(getbarcode))
-
 	log.Fatalln(http.ListenAndServe(*flags.WebAddr, nil))
 }
 
 func main() {
 
-	var fmake FuncMakeData
+	var fmake funcMakeData
 
 	flags.Parse()
 
@@ -422,7 +419,7 @@ func main() {
 	if err != nil {
 		flags.ExitWithError(err)
 	}
-	if err := DoTemplate(sticks); err != nil {
+	if err := doTemplate(sticks); err != nil {
 		flags.ExitWithError(err)
 	}
 }

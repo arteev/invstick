@@ -35,6 +35,7 @@ func load(dir string, filename string) error {
 	return nil
 }
 
+// LoadLocales load dictionary  json file from dir
 func LoadLocales(dir string) error {
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() && filepath.Ext(info.Name()) == ".json" {
@@ -47,6 +48,7 @@ func LoadLocales(dir string) error {
 	return err
 }
 
+// Translate returns string "s"" translation into the language "lang"
 func Translate(s string, lang string) string {
 	if ls, ok := locales[lang]; ok {
 		if t, ok := ls[s]; ok {
@@ -56,6 +58,7 @@ func Translate(s string, lang string) string {
 	return s
 }
 
+//Locales returns the list of loaded locale
 func Locales() []string {
 	ls := make([]string, 0)
 	for k := range locales {
@@ -65,6 +68,7 @@ func Locales() []string {
 	return ls
 }
 
+//NameLocale retruns name of "l" locale
 func NameLocale(l string) string {
 	s, ok := names[l]
 	if !ok {
